@@ -5,7 +5,7 @@
    <meta charset="utf-8">
    <meta name="viewport" content="width=device-width, initial-scale=1">
    <title>BNB Parser</title>
-   <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" />
+   <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
    <script>
       var MIN_REVIEWS = 15;
@@ -129,12 +129,13 @@
             <img :src="listing.picture_url" height="100px">
          </div>
          <div class="col-md-1">
-            <span class="glyphicon glyphicon-usd" aria-hidden="true"></span>{{toPrice(listing)}}
+            💲 {{toPrice(listing)}}
          </div>
          <div class="col-md-1">
-            <span class="glyphicon glyphicon-heart" aria-hidden="true"></span>{{listing.avg_rating}}
+            💕 {{listing.avg_rating}}/5
          </div>
-         <div class="col-md-1">({{listing.reviews_count}})</div>
+         <div class="col-md-1">
+            👍 {{listing.reviews_count}}</div>
          <div class="col-md-6">
             <a :href="bookLink(listing)">{{listing.name}}</a>
          </div>
