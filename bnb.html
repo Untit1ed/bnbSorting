@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="utf-8">
+   <title>BNB Parser</title>
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.css" />
+   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+   <script>
+      var MIN_REVIEWS = 15;
+      var MIN_RATING = 4.8;
+
+      window.onload = function () {
+         window.opener.postMessage('ready', '*')
+
+         window.app = new Vue({
+            el: '#app',
+            data: {
+               min_reviews: MIN_REVIEWS,
+               min_rating: MIN_RATING,
+
+               sort_by: 'price',
+               price_type: 'per_night',
+
+               require_sqm: false,
+
+               sorted: Object.freeze([])
+            },
+            methods: {
+               toPrice: function (listing) {
+                  if (window.app.price_type == 'total') {
+                     return listing.pricing_quote.price.total.amount_formatted
+                  } else {
+                     let t = listing.pricing_quote.price.price_items[0].localized_title
+                     let days = Number(t.split(' x ')[1].split(' ')[0])
+                     return ((listing.pricing_quote.price.total.amount / days)).toFixed(0)
+                  }
+               },
+               bookLink: function (listing) {
+                  // nesting href params from search page
+                  return 'https://www.airbnb.com/rooms/' + listing.id + '?' + window.json.href;
+               },
+               sortAndFilter: function () {
+                  var sorted = window.json.listings.sort(function (a, b) {
+                     switch (window.app.sort_by) {
+                        case 'price':
+                           return a.pricing_quote.price.total.amount - b.pricing_quote.price.total.amount;
+                        case 'price_rev':
+                           return b.pricing_quote.price.total.amount - a.pricing_quote.price.total.amount;
+                        case 'reviews_count':
+                           return b.reviews_count - a.reviews_count;
+                        case 'avg_rating':
+                           return (b.avg_rating ? b.avg_rating : 0) - (a.avg_rating ? a.avg_rating : 0);
+                        case 'by_sqm':
+                           return b.sqm - a.sqm;
+                     }
+                  })
+
+                  let min_reviews = Number(window.app.min_reviews);
+                  let min_rating = Number(window.app.min_rating);
+
+                  var sorted = sorted.filter(function (listing) {
+                     // new flats assume 0 rating
+                     let rating = listing.avg_rating ? listing.avg_rating : 0;
+
+                     if (listing.reviews_count >= min_reviews && rating >= min_rating) {
+                        if (window.app.require_sqm && listing.sqm == 0) {
+                           return false;
+                        }
+
+                        return true;
+                     } else {
+                        //console.log('fail', l)
+                        return false
+                     }
+                  })
+
+                  console.log(sorted)
+
+                  this.sorted = sorted
+               }
+            }
+         })
+      }
+
+      window.onmessage = function (e) {
+         //if (e.origin == 'https://airbnb.com')
+         window.json = JSON.parse(e.data)
+         let reg = /([0-9]+)[ ]?sqm/igm
+
+         for (let listing of window.json.listings) {
+            listing.sqm = reg.exec(listing.name)
+            // 0 if not provided
+            listing.sqm = listing.sqm ? Number(listing.sqm[1]) : 0
+         }
+
+         window.app.sortAndFilter()
+      }
+   </script>
+</head>
+
+<body>
+   <div class="container" id=app>
+      <input @change="sortAndFilter()" style="width:50px" v-model="min_reviews"> min reviews
+      <input @change="sortAndFilter()" style="width:50px" v-model="min_rating"> min rating / found
+      <b>{{sorted.length}}</b>
+
+      <select v-model="price_type" @change="sortAndFilter()">
+         <option value="per_night">Price per night</option>
+         <option value="total">Total price</option>
+      </select>
+
+      <select v-model="sort_by" @change="sortAndFilter()">
+         <option value="price">Price (low to high)</option>
+         <option value="price_rev">Price (high to low)</option>
+         <option value="reviews_count">Reviews count</option>
+         <option value="avg_rating">Avg rating</option>
+         <option value="by_sqm">By sqm in the name</option>
+      </select>
+
+      <input @change="sortAndFilter()" type="checkbox" v-model="require_sqm"> Require "sqm"
+
+      <div v-if="sorted.length > 100">
+         <h1>Showing only first 100 listings.</h1>
+      </div>
+      <div class="alert alert-info" v-for="listing in sorted.slice(0,100)">
+         <h3>
+            <a :href="bookLink(listing)">
+               {{toPrice(listing)}} - {{listing.avg_rating}}({{listing.reviews_count}}) - {{listing.name}}
+            </a>
+         </h3>
+
+         <div>
+            <img v-for="pic in listing.picture_urls.slice(0,10)" :src="pic" height="100px">
+         </div>
+      </div>
+   </div>
+</body>
+</html>
