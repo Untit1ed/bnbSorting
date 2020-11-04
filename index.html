@@ -144,7 +144,8 @@
                   <a :href="bookLink(listing)">{{listing.name}}</a>
                </div>
                <div class="col-md-1">
-                  <img v-for="pic in listing.picture_urls.slice(0,10)" :src="pic" height="100px">
+                  {{listing.city}}
+                  <!-- <img v-for="pic in listing.picture_urls.slice(0,10)" :src="pic" height="100px"> -->
                </div>
             </div>
          </li>
