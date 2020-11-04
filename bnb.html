@@ -129,10 +129,11 @@
             <img :src="listing.picture_url" height="100px">
          </div>
          <div class="col-md-2">
-            💲 {{toPrice(listing)}}
+            <span style="font-weight: 800;">${{toPrice(listing)}}</span>
          </div>
          <div class="col-md-2">
-            <span style="font-weight: 800;">⭐ {{listing.avg_rating}}</span>
+            ⭐
+            <span style="font-weight: 800;">{{listing.avg_rating}}</span>
             <span style="color: #717171">({{listing.reviews_count}})</span>
          </div>
          <div class="col-md-6">
