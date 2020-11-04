@@ -123,10 +123,10 @@
          <h1>Showing only first 100 listings.</h1>
       </div>
       <div class="row" v-for="listing in sorted.slice(0,100)">
-         <div class="col-md-2">
+         <div class="col-md-1">
             <img :src="listing.picture_url" width="72px">
          </div>
-         <div class="col-md-2">
+         <div class="col-md-3">
             <span style="font-weight: 800;">{{toPrice(listing)}}</span>
          </div>
          <div class="col-md-2">
@@ -134,7 +134,7 @@
             <span style="font-weight: 800;">{{listing.avg_rating}}</span>
             <span style="color: #717171">({{listing.reviews_count}})</span>
          </div>
-         <div class="col-md-6">
+         <div class="col-md-5">
             <a :href="bookLink(listing)">{{listing.name}}</a>
          </div>
          <div class="col-md-1">
