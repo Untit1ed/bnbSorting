@@ -25,7 +25,11 @@
             },
             methods: {
                totalPrice: (listing) => listing.pricing_quote.price.total.amount_formatted,
-               pricePerNight: (listing) => listing.pricing_quote.price_string,
+               pricePerNight: (listing) => {
+                  let title = listing.pricing_quote.price.price_items[0].localized_title;
+                  let days = Number(title.split('x')[1].trim());
+                  return `${listing.pricing_quote.price_string} x ${days} nights`;
+               },
                bookLink: function (listing) {
                   // nesting href params from search page
                   return 'https://www.airbnb.com/rooms/' + listing.id + '?' + window.json.href;
