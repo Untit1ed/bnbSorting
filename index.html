@@ -19,22 +19,13 @@
             data: {
                min_reviews: MIN_REVIEWS,
                min_rating: MIN_RATING,
-
                sort_by: 'price',
-               price_type: 'per_night',
-
                require_sqm: false,
-
                sorted: Object.freeze([])
             },
             methods: {
-               toPrice: function (listing) {
-                  if (window.app.price_type == 'total') {
-                     return listing.pricing_quote.price.total.amount_formatted
-                  } else {
-                     return `${listing.pricing_quote.price.price_items[0].localized_title} (${listing.pricing_quote.price_string})`;
-                  }
-               },
+               totalPrice: (listing) => listing.pricing_quote.price.total.amount_formatted,
+               pricePerNight: (listing) => listing.pricing_quote.price_string,
                bookLink: function (listing) {
                   // nesting href params from search page
                   return 'https://www.airbnb.com/rooms/' + listing.id + '?' + window.json.href;
@@ -104,11 +95,6 @@
       <input @change="sortAndFilter()" style="width:50px" v-model="min_rating"> min rating / found
       <b>{{sorted.length}}</b>
 
-      <select v-model="price_type" @change="sortAndFilter()">
-         <option value="per_night">Price per night</option>
-         <option value="total">Total price</option>
-      </select>
-
       <select v-model="sort_by" @change="sortAndFilter()">
          <option value="price">Price (low to high)</option>
          <option value="price_rev">Price (high to low)</option>
@@ -127,7 +113,8 @@
             <img :src="listing.picture_url" width="72px">
          </div>
          <div class="col-md-3">
-            <span style="font-weight: 800;">{{toPrice(listing)}}</span>
+            {{pricePerNight(listing)}}<br />
+            <span style="font-weight: 800;">{{totalPrice(listing)}}</span>
          </div>
          <div class="col-md-2">
             ⭐
