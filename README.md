@@ -1,7 +1,7 @@
 # bnbSorting
 A*rbnb Hunter
 
-Modified Egor Homakov's A*rbnb Hunter to sort stay results
+Modified Egor Homakov's A*rbnb Hunter to find and sort top rated A*rbnb apartments
 https://medium.com/@homakov/airbnb-hunter-find-perfect-apartments-ee418c06f60e
 
 
