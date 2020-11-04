@@ -32,7 +32,7 @@
                   if (window.app.price_type == 'total') {
                      return listing.pricing_quote.price.total.amount_formatted
                   } else {
-                     return `${listing.pricing_quote.price.price_items[0].localized_title} (${listing.pricing_quote.price_string}`;
+                     return `${listing.pricing_quote.price.price_items[0].localized_title} (${listing.pricing_quote.price_string})`;
                   }
                },
                bookLink: function (listing) {
@@ -127,7 +127,7 @@
             <img :src="listing.picture_url" width="720px">
          </div>
          <div class="col-md-1">
-            <span style="font-weight: 800;">${{toPrice(listing)}}</span>
+            <span style="font-weight: 800;">{{toPrice(listing)}}</span>
          </div>
          <div class="col-md-2">
             ⭐
