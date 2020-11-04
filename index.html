@@ -96,7 +96,7 @@
 <body>
    <div class="container" id=app>
       <div class="row">
-         <div class="col-md-1">
+         <div class="col-md-2" style="font-weight: 800;">
             <label>Found</label>
             <input class="form-control-plaintext" readonly  type="text" v-model="sorted.length">
          </div>
@@ -108,7 +108,7 @@
             <label>Min Rating</label>
             <input class="form-control form-control-sm" @change="sortAndFilter()" v-model="min_rating">
          </div>
-         <div class="col-md-3">
+         <div class="col-md-6">
             <label>Sort</label>
             <select class="form-control form-control-sm" v-model="sort_by" @change="sortAndFilter()">
                <option value="price">Price (low to high)</option>
