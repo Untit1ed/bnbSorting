@@ -131,7 +131,7 @@
                <div class="col-md-1">
                   <img :src="listing.picture_url" width="72px">
                </div>
-               <div class="col-md-3 text-right">
+               <div class="col-md-2 text-right">
                   {{amountOfNights(listing)}} nights x {{pricePerNight(listing)}}<br />
                   Total: <span style="font-weight: 800;">{{totalPrice(listing)}}</span>
                </div>
@@ -143,7 +143,7 @@
                <div class="col-md-5">
                   <a :href="bookLink(listing)">{{listing.name}}</a>
                </div>
-               <div class="col-md-1">
+               <div class="col-md-2">
                   {{listing.city}}
                   <!-- <img v-for="pic in listing.picture_urls.slice(0,10)" :src="pic" height="100px"> -->
                </div>
