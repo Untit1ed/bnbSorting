@@ -28,7 +28,7 @@
                pricePerNight: (listing) =>  listing.pricing_quote.price_string,
                amountOfNights: (listing) => {
                   let title = listing.pricing_quote.price.price_items[0].localized_title;
-                  return  Number(title.split('x')[1].split(' ')[0]);
+                  return  Number(title.split(' x ')[1].split(' ')[0]);
                },
                bookLink: function (listing) {
                   // nesting href params from search page
