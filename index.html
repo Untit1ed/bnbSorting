@@ -5,7 +5,7 @@
    <meta charset="utf-8">
    <meta name="viewport" content="width=device-width, initial-scale=1">
    <title>BNB Parser</title>
-   <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+   <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/4.5.3/css/bootstrap.min.css" />
    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
    <script>
       var MIN_REVIEWS = 15;
@@ -25,10 +25,10 @@
             },
             methods: {
                totalPrice: (listing) => listing.pricing_quote.price.total.amount_formatted,
-               pricePerNight: (listing) =>  listing.pricing_quote.price_string,
+               pricePerNight: (listing) => listing.pricing_quote.price_string,
                amountOfNights: (listing) => {
                   let title = listing.pricing_quote.price.price_items[0].localized_title;
-                  return  Number(title.split(' x ')[1].split(' ')[0]);
+                  return Number(title.split(' x ')[1].split(' ')[0]);
                },
                bookLink: function (listing) {
                   // nesting href params from search page
@@ -95,19 +95,30 @@
 
 <body>
    <div class="container" id=app>
-      <input @change="sortAndFilter()" style="width:50px" v-model="min_reviews"> min reviews
-      <input @change="sortAndFilter()" style="width:50px" v-model="min_rating"> min rating / found
-      <b>{{sorted.length}}</b>
-
-      <select v-model="sort_by" @change="sortAndFilter()">
-         <option value="price">Price (low to high)</option>
-         <option value="price_rev">Price (high to low)</option>
-         <option value="reviews_count">Reviews count</option>
-         <option value="avg_rating">Avg rating</option>
-         <option value="by_sqm">By sqm in the name</option>
-      </select>
-
-      <input @change="sortAndFilter()" type="checkbox" v-model="require_sqm"> Require "sqm"
+      <div class="row">
+         <div class="col-md-3">
+            <label>Min Reviews</label>
+            <input class="form-control" @change="sortAndFilter()" v-model="min_reviews">
+         </div>
+         <div class="col-md-3">
+            <label>Min Rating</label>
+            <input class="form-control" @change="sortAndFilter()" v-model="min_rating">
+         </div>
+         <div class="col-md-3">
+            <label>Found</label>
+            <b>{{sorted.length}}</b>
+         </div>
+         <div class="col-md-3">
+            <select class="custom-select d-block w-100" v-model="sort_by" @change="sortAndFilter()">
+               <option value="price">Price (low to high)</option>
+               <option value="price_rev">Price (high to low)</option>
+               <option value="reviews_count">Reviews count</option>
+               <option value="avg_rating">Avg rating</option>
+               <option value="by_sqm">By sqm in the name</option>
+            </select>
+         </div>
+      </div>
+      <!-- <input @change="sortAndFilter()" type="checkbox" v-model="require_sqm"> Require "sqm" -->
 
       <div v-if="sorted.length > 100">
          <h1>Showing only first 100 listings.</h1>
