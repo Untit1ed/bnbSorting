@@ -128,14 +128,13 @@
          <div class="col-md-2">
             <img :src="listing.picture_url" height="100px">
          </div>
-         <div class="col-md-1">
+         <div class="col-md-2">
             💲 {{toPrice(listing)}}
          </div>
-         <div class="col-md-1">
-            💕 {{listing.avg_rating}}/5
+         <div class="col-md-2">
+            <span style="font-weight: 800;">⭐ {{listing.avg_rating}}</span>
+            <span style="color: #717171">({{listing.reviews_count}})</span>
          </div>
-         <div class="col-md-1">
-            👍 {{listing.reviews_count}}</div>
          <div class="col-md-6">
             <a :href="bookLink(listing)">{{listing.name}}</a>
          </div>
@@ -145,4 +144,5 @@
       </div>
    </div>
 </body>
+
 </html>
