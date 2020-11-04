@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+/* eslint-disable immutable/no-mutation */
 /* Airbnb Hunter - find top rated Airbnb apartments */
 const hunterURL = 'https://untit1ed.github.io/bnbSorting/';
 
@@ -13,112 +15,119 @@ function extractSection(json) {
 	return sec.find((o) => o.section_component_type === 'LISTINGS_GRID');
 }
 
-var exportable = [];
-var unique_ids = [];
-var count_by_range = {};
-var items_per_grid = 50;
+const exportable = [];
+const uniqueIds = [];
+const countByRange = {};
+const itemsPerGrid = 50;
 
-var dataState = JSON.parse(document.getElementById('data-state').innerHTML);
-var api_key = dataState.bootstrapData['layout-init'].api_config.key;
+const dataState = JSON.parse(document.getElementById('data-state').innerHTML);
+const apiKey = dataState.bootstrapData['layout-init'].api_config.key;
 
 
-async function parsePriceRange(c) {
-	console.log('Parsing from ' + c.min + ' to ' + c.max);
+async function parsePriceRange(params) {
+	console.log(`Parsing from ${params.min} to ${params.max}`);
 
-	c.anything_left = true
-	c.items_offset = 0
+	params.isAnythingLeft = true;
+	params.itemsOffset = 0;
 
-	while (c.anything_left) {
+	while (params.isAnythingLeft) {
 		const searchParams = new URLSearchParams(location.href.split('?')[1]);
-		searchParams.set('items_per_grid', items_per_grid);
-		searchParams.set('items_offset', c.items_offset);
-		searchParams.set('key', api_key);
+		searchParams.set('items_per_grid', itemsPerGrid);
+		searchParams.set('items_offset', params.itemsOffset);
+		searchParams.set('key', apiKey);
 
-		searchParams.set('price_min', c.min);
-		searchParams.set('price_max', c.max);
+		searchParams.set('price_min', params.min);
+		searchParams.set('price_max', params.max);
 
-		if (c.last_search_session_id)
-			searchParams.set('last_search_session_id', c.last_search_session_id);
+		if (params.last_search_session_id)
+			searchParams.set('last_search_session_id', params.last_search_session_id);
 
-		if (c.federated_search_session_id)
-			searchParams.set('federated_search_session_id', c.federated_search_session_id);
+		if (params.federated_search_session_id)
+			searchParams.set('federated_search_session_id', params.federated_search_session_id);
 
-		hunterParse.innerHTML = `Parsing page ` + ((c.items_offset / items_per_grid) + 1) + ' range ' + c.min + '..' + c.max
+		// eslint-disable-next-line no-undef
+		hunterParse.innerHTML = `Parsing page ${(params.itemsOffset / itemsPerGrid) + 1} range ${params.min}..${params.max}`;
 
 		//console.log('Request listings: ', searchParams.toString());
 		const json = await getJSON(`${location.origin}/api/v2/explore_tabs?${searchParams.toString()}`);
 		// 17 pages * 18 = 306 results limit
 		if (json.explore_tabs[0].home_tab_metadata.listings_count > 305) {
-			const half = Math.round((c.max - c.min) / 2);
+			const half = Math.round((params.max - params.min) / 2);
 
-			console.log('Bisect in half $' + half);
+			console.log(`Bisect in half $${half}`);
 
 			return await Promise.all([
-				parsePriceRange(Object.assign({}, c, { max: c.min + half })),
-				parsePriceRange(Object.assign({}, c, { min: c.min + half })),
+				parsePriceRange(Object.assign({}, params, { max: params.min + half })),
+				parsePriceRange(Object.assign({}, params, { min: params.min + half })),
 			]);
 		}
 
-		count_by_range[c.max] = json.explore_tabs[0].home_tab_metadata.listings_count;
+		countByRange[params.max] = json.explore_tabs[0].home_tab_metadata.listings_count;
 
-		var section = extractSection(json);
-		if (section.listings.length > 0) {
-			for (let listing of section.listings) {
-				if (unique_ids.indexOf(listing.listing.id) == -1) {
-					listing.listing.pricing_quote = listing.pricing_quote;
-					exportable.push(listing.listing);
-
-					unique_ids.push(listing.listing.id);
-				}
-			}
-		}
-		else {
+		const section = extractSection(json);
+		if (section.listings.length === 0) {
 			console.log('Empty listings');
+		}
+
+		for (const listing of section.listings) {
+			if (uniqueIds.indexOf(listing.listing.id) === -1) {
+				// eslint-disable-next-line camelcase
+				listing.listing.pricing_quote = listing.pricing_quote;
+				exportable.push(listing.listing);
+
+				uniqueIds.push(listing.listing.id);
+			}
 		}
 
 		// repeat
 		if (json.explore_tabs[0].pagination_metadata.has_next_page) {
-			c.items_offset += items_per_grid;
+			params.itemsOffset += itemsPerGrid;
 
-			c.last_search_session_id = section.search_session_id;
-			c.federated_search_session_id = json.metadata.federated_search_session_id;
+			// eslint-disable-next-line camelcase
+			params.last_search_session_id = section.search_session_id;
+			// eslint-disable-next-line camelcase
+			params.federated_search_session_id = json.metadata.federated_search_session_id;
 		}
 		else {
 			// break loop
-			c.anything_left = false;
+			params.isAnythingLeft = false;
 		}
 
-		hunterExport.innerHTML = `Export - ` + unique_ids.length;
+		// eslint-disable-next-line no-undef
+		hunterExport.innerHTML = `Export - ${uniqueIds.length}`;
 	}
 }
 
 
 async function initParse() {
-	const c = {
-		anything_left: true,
-		items_offset: 0,
-		last_search_session_id: false,
-		federated_search_session_id: false,
-		href: new URLSearchParams(location.href.split('?')[1]),
-	};
+	const href = new URLSearchParams(location.href.split('?')[1]);
 
-	if (c.href.get('sw_lat') == null) {
+	if (href.get('sw_lat') == null) {
 		alert('Slightly move the map');
 		return;
 	}
 
 	// set initial price range
-	c.min = Number(c.href.get('price_min'));
-	c.max = Number(c.href.get('price_max'));
-
-	if (!c.min) c.min = 1;
-
-	if (!c.max) {
+	const min = Number(href.get('price_min'));
+	const max = Number(href.get('price_max'));
+	if (!max) {
 		alert('Set price range');
 		return;
 	}
 
-	await parsePriceRange(c);
+	await parsePriceRange({
+		min: min ? min : 1,
+		max,
+		isAnythingLeft: true,
+		itemsOffset: 0,
+		// eslint-disable-next-line camelcase
+		last_search_session_id: false,
+		// eslint-disable-next-line camelcase
+		federated_search_session_id: false,
+		href,
+	});
+
+	// eslint-disable-next-line no-undef
 	hunterParse.innerHTML = 'Parse';
 };
 
@@ -137,11 +146,13 @@ function exportListings() {
 	});
 }
 
-var div = document.createElement('div');
+const div = document.createElement('div');
 div.innerHTML = `<div style='position:fixed;left:45%;top:0px;z-index:99999;background-color: bisque;  padding: 20px;'>
 <a href='#' id='hunterParse'>Parse</a> |
 <a href='#' id='hunterExport'>Export - 0</a>
 </div>`;
 document.body.appendChild(div);
+// eslint-disable-next-line no-undef
 hunterParse.onclick = initParse;
+// eslint-disable-next-line no-undef
 hunterExport.onclick = exportListings;
