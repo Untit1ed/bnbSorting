@@ -96,20 +96,21 @@
 <body>
    <div class="container" id=app>
       <div class="row">
-         <div class="col-md-3">
-            <label>Min Reviews</label>
-            <input class="form-control" @change="sortAndFilter()" v-model="min_reviews">
-         </div>
-         <div class="col-md-3">
-            <label>Min Rating</label>
-            <input class="form-control" @change="sortAndFilter()" v-model="min_rating">
-         </div>
-         <div class="col-md-3">
+         <div class="col-md-1">
             <label>Found</label>
-            <b>{{sorted.length}}</b>
+            <input class="form-control-plaintext" readonly  type="text" value="{{sorted.length}}">
+         </div>
+         <div class="col-md-2">
+            <label>Min Reviews</label>
+            <input class="form-control form-control-sm" @change="sortAndFilter()" v-model="min_reviews">
+         </div>
+         <div class="col-md-2">
+            <label>Min Rating</label>
+            <input class="form-control form-control-sm" @change="sortAndFilter()" v-model="min_rating">
          </div>
          <div class="col-md-3">
-            <select class="custom-select d-block w-100" v-model="sort_by" @change="sortAndFilter()">
+            <label>Sort</label>
+            <select class="form-control form-control-sm" v-model="sort_by" @change="sortAndFilter()">
                <option value="price">Price (low to high)</option>
                <option value="price_rev">Price (high to low)</option>
                <option value="reviews_count">Reviews count</option>
