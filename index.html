@@ -25,10 +25,10 @@
             },
             methods: {
                totalPrice: (listing) => listing.pricing_quote.price.total.amount_formatted,
-               pricePerNight: (listing) => {
+               pricePerNight: (listing) =>  listing.pricing_quote.price_string,
+               amountOfNights: (listing) => {
                   let title = listing.pricing_quote.price.price_items[0].localized_title;
-                  let days = Number(title.split('x')[1].trim());
-                  return `${listing.pricing_quote.price_string} x ${days} nights`;
+                  return  Number(title.split('x')[1].split(' ')[0]);
                },
                bookLink: function (listing) {
                   // nesting href params from search page
@@ -116,9 +116,9 @@
          <div class="col-md-1">
             <img :src="listing.picture_url" width="72px">
          </div>
-         <div class="col-md-3">
-            {{pricePerNight(listing)}}<br />
-            <span style="font-weight: 800;">{{totalPrice(listing)}}</span>
+         <div class="col-md-3 text-right">
+            {{amountOfNights(listing)}} nights X {{pricePerNight(listing)}}<br />
+            Total: <span style="font-weight: 800;">{{totalPrice(listing)}}</span>
          </div>
          <div class="col-md-2">
             ⭐
