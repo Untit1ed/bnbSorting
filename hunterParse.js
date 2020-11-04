@@ -1,5 +1,5 @@
 /* Airbnb Hunter - find top rated Airbnb apartments */
-const hunterURL = 'https://untit1ed.github.io/bnbSorting/bnb.html';
+const hunterURL = 'https://untit1ed.github.io/bnbSorting';
 
 async function getJSON(url) {
 	return await fetch(url)
